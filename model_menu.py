@@ -1,9 +1,9 @@
-from tkinter import Tk
-import numpy as np
 import pandas as pd
 from tkinter import ttk
 from tkinter import *
 import Createdata as create
+from tkinter import messagebox
+import verdata as vw
 
 def main():
     root = Tk()
@@ -25,41 +25,56 @@ class ModelMenu:
         self.title_no_revisados = ttk.Label(self.root, text='EVENTOS SIN REVISAR', font="bold")
         self.title_no_revisados.place(x=100, y=160)
 
-        if 'Sin revisar' in self.df.Estado.values:
-            self.select_no_revisado = ttk.Combobox(self.root, values=[self.df['Nombre del evento'].values[i] for i in range(self.df.columns.size)] , width=59)
-            self.select_no_revisado.place(x=20, y=230)
-        else:
-            self.select_no_revisado = ttk.Combobox(self.root, values='', width=59)
-            self.select_no_revisado.place(x=20, y=230)
+        self.select_revisado = ttk.Combobox(self.root, width=59)
+        self.select_revisado.place(x=20, y=90)
 
-        self.ver_no_revisado = ttk.Button(self.root, text='Ver')
+        self.select_no_revisado = ttk.Combobox(self.root, width=59)
+        self.select_no_revisado.place(x=20, y=230)
+        self.data_no = []
+        self.data_si = []
+        for i in range(self.df.Estado.size):
+            if self.df['Estado'].values[i] == 'Revisado':
+                self.data_si.append(self.df['Nombre del evento'].values[i])
+
+            if self.df['Estado'].values[i] == 'Pendiente por revisar':
+                self.data_no.append(self.df['Nombre del evento'].values[i])
+
+        for x in self.data_no:
+            self.select_no_revisado['values'] = (*self.select_no_revisado['values'], x)
+
+        for x in self.data_si:
+            self.select_revisado['values'] = (*self.select_revisado['values'], x)
+
+
+        self.ver_no_revisado = ttk.Button(self.root, text='Ver', command=self.ver_info)
         self.ver_no_revisado.place(x=160, y=270)
 
         # ---------------------Eventos revisados ------------------------
         self.title_revisados = ttk.Label(self.root, text='EVENTOS REVISADOS', font="bold")
         self.title_revisados.place(x=100, y=20)
 
-        if 'Revisado' in self.df.Estado.values:
-            self.select_revisado = ttk.Combobox(self.root, values=[self.df['Nombre del evento'].values[i] for i in range(self.df.columns.size)], width=59)
-            self.select_revisado.place(x=20, y=90)
-        else:
-            self.select_revisado = ttk.Combobox(self.root, width=59)
-            self.select_revisado.place(x=20, y=90)
-
-        self.ver_revisado = ttk.Button(self.root, text='Ver')
+        self.ver_revisado = ttk.Button(self.root, text='Ver', command=self.ver_info2)
         self.ver_revisado.place(x=160, y=120)
 
         #-----------------------Registrar eventos-------------------------
-        self.registrar = ttk.Button(self.root, text='Registrar un evento', command=gui_registrar_data)
+        self.registrar = ttk.Button(self.root, text='Registrar un evento', command=self.gui_registrar_data)
         self.registrar.place(x=10,y=370)
 
-        # -----------------------Actualizar eventos-------------------------
-        self.registrar = ttk.Button(self.root, text='Actualizar')
-        self.registrar.place(x=290, y=370)
 
-def gui_registrar_data(event=None):
-    create.main2()
-    pass
+    def ver_info(self):
+        self.idd = self.df.index[self.df['Nombre del evento'] == self.select_no_revisado.get()].tolist()
+        self.root.destroy()
+        vw.main3(self.idd)
+
+
+    def ver_info2(self):
+        self.idd = self.df.index[self.df['Nombre del evento'] == self.select_revisado.get()].tolist()
+        self.root.destroy()
+        vw.main3(self.idd)
+    def gui_registrar_data(self,event=None):
+        self.root.destroy()
+        create.main2()
+
 
 if __name__ == "__main__":
     main()

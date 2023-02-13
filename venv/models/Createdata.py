@@ -1,9 +1,9 @@
+import numpy as np
 import pandas as pd
 from tkinter import messagebox
 from tkinter import ttk
 from tkinter import *
 from tkcalendar import DateEntry
-import model_menu as mm
 
 def main2():
     root = Tk()
@@ -33,7 +33,7 @@ class CreateData:
         self.desc_label = ttk.Label(self.root, text='DESCRIPCIÓN DEL EVENTO')
         self.desc_label.place(x=20, y=200)
 
-        self.desc_ev = Entry(self.root, width=80)
+        self.desc_ev = Text(self.root, height = 7, width = 60)
         self.desc_ev.place(x=20,y=250)
 
         self.fecha_label = ttk.Label(self.root, text='FECHA DEL EVENTO')
@@ -53,13 +53,11 @@ class CreateData:
     def registrar_data(self, event=None):
         self.df = pd.concat([self.df, pd.DataFrame(
             {'Nombre del evento': self.nombre_ev.get(), 'Tipo de evento': self.tipo_ev.get(),
-             'Descripcion': self.desc_ev.get(), 'Fecha': self.fecha_ev.get(), 'Estado': 'Pendiente por revisar',
+             'Descripcion': self.desc_ev.get("1.0", 'end-1c'), 'Fecha': self.fecha_ev.get(), 'Estado': 'Sin revisar',
              'Gestion': ''}, index=[0])], ignore_index=True)
         self.df.update(self.df)
         self.df.to_csv(r'C:\Users\migue\OneDrive\Escritorio\RegistroGUI\dataframe.csv')
         messagebox.showinfo('Registro exitoso!', 'Información ingresada')
-        self.root.destroy()
-        mm.main()
 
 
 if __name__ == "__main__":
